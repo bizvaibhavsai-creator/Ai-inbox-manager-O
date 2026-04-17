@@ -786,14 +786,66 @@ export default function RepliesPage() {
             </div>
           )}
 
-          {/* Bottom info bar — shown when sent or no draft */}
-          {(selectedReply.status === "sent" || (!selectedReply.draft_response && selectedReply.status !== "human_managed")) && (
+          {/* Bottom info bar — shown when sent or no draft (contextual message) */}
+          {selectedReply.status === "sent" && (
             <div
-              className="flex items-center gap-4 px-6 py-3"
-              style={{ borderTop: "1px solid #e2e6ee", backgroundColor: "#fafbfd" }}
+              className="flex items-center gap-2 px-6 py-3"
+              style={{ borderTop: "1px solid #e2e6ee", backgroundColor: "#f0fdf4" }}
             >
-              <span className="text-[11px]" style={{ color: "#a5abbe" }}>
-                Reply managed via Slack approval workflow
+              <svg className="h-4 w-4" fill="none" stroke="#16a34a" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="text-[12px] font-semibold" style={{ color: "#16a34a" }}>
+                Sent via Instantly
+                {selectedReply.sent_at && ` · ${new Date(selectedReply.sent_at).toLocaleString("en-US", { timeZone: "America/New_York" })}`}
+              </span>
+            </div>
+          )}
+
+          {selectedReply.status === "auto_handled" && !selectedReply.draft_response && (
+            <div
+              className="flex items-center gap-2 px-6 py-3"
+              style={{ borderTop: "1px solid #e2e6ee", backgroundColor: "#f3f4f6" }}
+            >
+              <span
+                className="rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-wider"
+                style={{
+                  backgroundColor: (categoryStyles[selectedReply.category] || { bg: "#f3f4f6" }).bg,
+                  color: (categoryStyles[selectedReply.category] || { color: "#6b7280" }).color,
+                }}
+              >
+                {(categoryStyles[selectedReply.category] || { label: selectedReply.category }).label}
+              </span>
+              <span className="text-[12px]" style={{ color: "#6b7280" }}>
+                No draft needed for this category.
+              </span>
+            </div>
+          )}
+
+          {selectedReply.status === "rejected" && (
+            <div
+              className="flex items-center gap-2 px-6 py-3"
+              style={{ borderTop: "1px solid #e2e6ee", backgroundColor: "#fef2f2" }}
+            >
+              <span className="text-[12px] font-semibold" style={{ color: "#ef4444" }}>
+                Draft rejected
+              </span>
+            </div>
+          )}
+
+          {!selectedReply.draft_response &&
+            selectedReply.status !== "human_managed" &&
+            selectedReply.status !== "auto_handled" &&
+            selectedReply.status !== "sent" &&
+            selectedReply.status !== "rejected" &&
+            selectedReply.status !== "needs_josh" && (
+            <div
+              className="flex items-center gap-2 px-6 py-3"
+              style={{ borderTop: "1px solid #e2e6ee", backgroundColor: "#fffbeb" }}
+            >
+              <span className="text-[22px]">&#9888;</span>
+              <span className="text-[12px] font-semibold" style={{ color: "#92400e" }}>
+                No draft generated. Check the OpenAI API key or backend logs.
               </span>
             </div>
           )}
