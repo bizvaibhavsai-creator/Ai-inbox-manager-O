@@ -840,13 +840,28 @@ export default function RepliesPage() {
             selectedReply.status !== "rejected" &&
             selectedReply.status !== "needs_josh" && (
             <div
-              className="flex items-center gap-2 px-6 py-3"
+              className="flex items-start gap-3 px-6 py-3"
               style={{ borderTop: "1px solid #e2e6ee", backgroundColor: "#fffbeb" }}
             >
-              <span className="text-[22px]">&#9888;</span>
-              <span className="text-[12px] font-semibold" style={{ color: "#92400e" }}>
-                No draft generated. Check the OpenAI API key or backend logs.
-              </span>
+              <span className="text-[22px] leading-none">&#9888;</span>
+              <div>
+                <p className="text-[12px] font-semibold" style={{ color: "#92400e" }}>
+                  No draft generated. Please add OpenAI credits first.
+                </p>
+                <p className="mt-0.5 text-[11px]" style={{ color: "#a16207" }}>
+                  Your OpenAI account is out of quota. Add credits at{" "}
+                  <a
+                    href="https://platform.openai.com/account/billing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline"
+                    style={{ color: "#b45309" }}
+                  >
+                    platform.openai.com/account/billing
+                  </a>
+                  , then new replies will auto-draft.
+                </p>
+              </div>
             </div>
           )}
         </div>
