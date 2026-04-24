@@ -307,16 +307,16 @@ async def receive_instantly_webhook(payload: InstantlyWebhookPayload):
         reply.draft_response = draft
         reply.eaccount = eaccount
 
-        # Check if draft needs Josh's help - never auto-send these
-        needs_josh = draft and "needs josh" in draft.lower()
+        # Check if draft needs Otavio's help - never auto-send these
+        needs_otavio = draft and "needs otavio" in draft.lower()
 
         if human_managed:
             reply.status = "human_managed"
         elif category in ("ooo", "unsubscribe", "dnc", "wrong_person", "not_interested"):
             reply.status = "auto_handled"
-        elif needs_josh:
+        elif needs_otavio:
             # Never auto-send, always needs manual intervention
-            reply.status = "needs_josh"
+            reply.status = "needs_otavio"
         elif approval_mode == "automated" and draft:
             # Auto-send: send via Instantly immediately
             reply.status = "sent"
@@ -406,8 +406,8 @@ async def send_reply(request: SendReplyRequest):
         response_body = request.custom_response or reply.draft_response
         if not response_body:
             raise HTTPException(status_code=400, detail="No response body to send")
-        if "needs josh" in response_body.lower():
-            raise HTTPException(status_code=400, detail="This reply needs Josh's help. Cannot auto-send.")
+        if "needs otavio" in response_body.lower():
+            raise HTTPException(status_code=400, detail="This reply needs Otavio's help. Cannot auto-send.")
 
         # Send via Instantly.ai API v2
         try:
@@ -575,8 +575,8 @@ async def approve_reply_from_dashboard(reply_id: int):
             raise HTTPException(status_code=400, detail="Reply already sent")
         if not reply.draft_response:
             raise HTTPException(status_code=400, detail="No draft response to send")
-        if "needs josh" in reply.draft_response.lower():
-            raise HTTPException(status_code=400, detail="This reply needs Josh's help. Cannot auto-send.")
+        if "needs otavio" in reply.draft_response.lower():
+            raise HTTPException(status_code=400, detail="This reply needs Otavio's help. Cannot auto-send.")
 
         # Fetch eaccount from Instantly if missing (for older replies)
         if not reply.eaccount:
@@ -772,7 +772,7 @@ async def redraft_recent(count: int = Query(10, le=50)):
                 reply = session.get(Reply, r.id)
                 old_draft = reply.draft_response
                 reply.draft_response = new_draft
-                if new_draft and "needs josh" not in new_draft.lower():
+                if new_draft and "needs otavio" not in new_draft.lower():
                     reply.status = "pending_approval"
                 session.add(reply)
                 session.commit()
